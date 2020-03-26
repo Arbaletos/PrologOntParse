@@ -16,9 +16,3 @@ hyper_all(X, Y) :- hyper(X, Y).
 hyper_all(X, Z) :- hyper(X, Y), not(finite(Y)), hyper_all(Y, Z).
 
 ekz(X, Z) :- term(X), hyp_all(X, Y), ekz(Y, Z).
-
-
-
-
-
-

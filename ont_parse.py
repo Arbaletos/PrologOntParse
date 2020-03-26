@@ -1,15 +1,8 @@
-import sys, pymorphy2
+import sys
 
-def inflect(word, g):
-    words = word.split(' ')
-    return ' '.join([morph.parse(w)[0].inflect(g).word for w in words])
+from morph import inflect, multi_inflect, parse
 
-def multi_inflect(words, g):
-    if len(words) == 1:
-        return inflect(words[0], g)
-    inflected_words = [inflect(w, g) for w in words]
-    return ', '.join(inflected_words[:-1])+' и '+inflected_words[-1]
-    
+
 def read_ng(words):
     ng = []
     case = 'nomn'
@@ -17,10 +10,10 @@ def read_ng(words):
         if len(w)==0 or not (w[0].isalpha()):
             i-=1
             break
-        if 'LATN' in morph.parse(w)[0].tag:
+        if 'LATN' in parse(w)[0].tag:
             ng += [w]
             continue
-        pos = morph.parse(w)[0].tag.POS
+        pos = parse(w)[0].tag.POS
         if pos in ['NOUN', 'ADJF', 'PRTF', "PREP"]:
             if pos=='PRTF':
                 case = 'nomn'
@@ -33,11 +26,13 @@ def read_ng(words):
             i-=1
             break
     return ' '.join(ng), words[i+1:]
-    
+ 
+   
 def multiparse(words):
     words = ' '.join(words).replace(' и ', ', ').split(', ')
     return [read_ng(w.split(' '))[0] for w in words]
     
+
 def read_brackets(words):
     ret = []
     line = ' '.join(words).replace(') ', ')')
@@ -45,7 +40,7 @@ def read_brackets(words):
     res = line[line.index(')')+2:]
     return ret, res
     
-def parse(line):
+def parse_line(line):
     ret = []
     words = line.replace('.', '').split(' ')
     if words[0] in ['Пример', 'Примеры']:
@@ -78,31 +73,31 @@ def parse(line):
     elif len(res) and len(res[0]):
         ret.append(('attr', [ng, ' '.join(res)]))
     return ret
-    
+   
+ 
 def kb_to_prolog(kb):
     ret = []
     for a, args in sorted(kb, key=lambda x:x[0]):
         ret.append("{}('{}').".format(a, "','".join(args))) 
     return ret
    
-if __name__=='__main__':
 
+if __name__=='__main__':
     if len(sys.argv)<=2:
         print('USAGE: python ont_parse.py input_file output_file')
         quit()
-    
-    morph = pymorphy2.MorphAnalyzer()
+  
     inputo = sys.argv[1]
     kb_gen = []
     lines = []
     for l in open(inputo, 'r', encoding='utf-8'):
         lines += l.strip().split('. ')
     for line in lines:
-        for l in parse(line):
+        for l in parse_line(line):
             if l not in kb_gen:
                 kb_gen.append(l)
     with open(sys.argv[2], 'w', encoding='utf-8') as writer:
-        for l in kb_to_prolog(kb_gen):
+        for l in kb_to_prolog(kb_gen)[::-1]:
             writer.write(l + '\n')
             
     

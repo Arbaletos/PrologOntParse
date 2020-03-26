@@ -1,2 +1,6 @@
-# PrologOntParse
-Python utilities for automatic ontology population in form of Prolog programm.
+lecion.txt -- Исходная лекция
+lecion_formal.txt -- Адаптированная лекция
+ontology.pr -- Формальная онтология т.е. набор правил для вывода логических отношений на основе фактов
+kb_auto.pr -- База знаний по исходной лекции, составленная руками
+kb_hand.pr -- База знаний, сгенерированная по адаптированной лекции автоматически
+ont_parse.py -- Код для генерации онтологии по тексту адаптированной лекции: python ont_parse.py input_file output_file

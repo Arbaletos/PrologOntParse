@@ -1,0 +1,24 @@
+
+term(Y) :- complex(X), syn(X, Y).
+
+complex(X) :- syn(X, _).
+
+root(X) :- term(X), not(hyp(_, X)).
+
+finite(X) :- term(X), not(hyp(X, _)).
+
+hyp_all(X, Z) :- hyp(X, Z).
+hyp_all(X, Z) :- hyp(X, Y), not(finite(Y)), hyp_all(Y, Z).
+
+hyper(X, Y) :- hyp(Y, X).
+
+hyper_all(X, Y) :- hyper(X, Y).
+hyper_all(X, Z) :- hyper(X, Y), not(finite(Y)), hyper_all(Y, Z).
+
+ekz(X, Z) :- term(X), hyp_all(X, Y), ekz(Y, Z).
+
+
+
+
+
+

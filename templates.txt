@@ -1,5 +1,7 @@
 $TERM - это $*
+$TERM – это $*
 $TERM - $*
+$TERM – $* 
 $TERM называется $*
 $* называют $TERM
 $* противопоставляют $TERM
@@ -9,14 +11,15 @@ $TERM обозначает $*
 $TERM является $*
 $TERM выражается $*
 $TERM ставит $*
-$TERM (осуществляется $* (в скобках начинается с глагола слово)
+$TERM (осуществляется $*
 $TERM означает $*
 $TERM решает $*
-$TERM ($SYNONYM) $* (синоним-существительное или существительное + прилагательное)
+$TERM ($SYNONYM) $*
 $TERM или $SYNONYM $*
 $TERM $* будем также называть $SYNONYM $*
 $TERM $* или будем также называть $SYNONYM $*
-К $TERM относят $HYPONYM1, $HYPONYM2, $HYPONYM3 $* (также вместо , может быть ;) 
+К $TERM относят $HYPONYM1, $HYPONYM2, $HYPONYM3 $*
+К $TERM относят $HYPONYM1; $HYPONYM2; $HYPONYM3 $*
 $TERM делятся на $HYPONYM1, $HYPONYM2, $*
 Выделяют следующие $TERM $* : $HYPONYM1, $HYPONYM2, $* 
 Выделяют следующие $TERM $* . 1. $HYPONYM1; 2. $HYPONYM2, $* 
@@ -29,13 +32,3 @@ $TERM может состоять из $*: $HYPONYM1, $HYPONYM2, $*
 Примеры $TERM : $EXAMPLE1, $EXAMPLE2, $*
 Например, $EXAMPLE1, $EXAMPLE2, $* так называемые $TERM 
 В роли $TERM выступает, например,  $EXAMPLE1, $EXAMPLE2, $*
-
-
-
-
-
-
-
-
-
-

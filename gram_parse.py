@@ -62,16 +62,16 @@ def parse_line(line, rule):
           cur_text = line
           if i+1 < len(tokens):
               try:
-                  cur_text = line[:line.index(tokens[i+1])] 
-                  line = line[line.index(tokens[i+1]):] 
-                  #print(cur_text)
+                  cur_text = line[:line.index(tokens[i+1])].strip()
+                  line = line[line.index(tokens[i+1]):]
               except:
                   pass
           try:
               ng, res = read_ng(word_tokenize(cur_text))
-              print(t, ng)
+              print(t, 'form:', ng, 'norm:', cur_text)
           except Exception as e:
-              print(e)
+              print(e, cur_text)
+
         else:
           if line.find(t) >= 0:
               line = line[line.index(t)+len(t):]

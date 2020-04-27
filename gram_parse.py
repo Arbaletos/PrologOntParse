@@ -68,7 +68,7 @@ def parse_line(line, rule):
                   pass
           try:
               ng, res = read_ng(word_tokenize(cur_text))
-              print(t, 'form:', ng, 'norm:', cur_text)
+              print(t, 'norm:', ng, 'form:', cur_text)
           except Exception as e:
               print(e, cur_text)
 
@@ -110,14 +110,14 @@ def split_rule(line):
    
 
 if __name__=='__main__':
-    if len(sys.argv)<=1:
-        print('USAGE: python gram_parse.py input_file')
+    if len(sys.argv)<=2:
+        print('USAGE: python gram_parse.py template_file input_file')
         quit()
   
-    inputo = sys.argv[1]
+    inputo = sys.argv[2]
     lines = []
 
-    templates = [l.strip() for l in open('templates.txt')]
+    templates = [l.strip() for l in open(sys.argv[1])]
     #for t in templates:
     #    print(split_rule(t))
         

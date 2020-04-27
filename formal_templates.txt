@@ -1,0 +1,14 @@
+$TERM подразделяются на $HYPONYM и $HYPONYM
+$TERM подразделяются на $HYPONYM, $HYPONYM и $HYPONYM
+Пример $TERM -- $EXAMPLE и $EXAMPLE
+Пример $TERM -- $EXAMPLE, $EXAMPLE и $EXAMPLE
+Пример $TERM -- $EXAMPLE, $EXAMPLE, $EXAMPLE и $EXAMPLE
+Примеры $TERM -- $EXAMPLE и $EXAMPLE
+Примеры $TERM -- $EXAMPLE, $EXAMPLE и $EXAMPLE
+Примеры $TERM -- $EXAMPLE, $EXAMPLE, $EXAMPLE и $EXAMPLE
+$HYPONYM -- это вид $HYPERNYM
+$TERM
+$TERM ($EXAMPLE)
+$TERM ($EXAMPLE, $EXAMPLE)
+$TERM состоит из $PART
+$TERM относится к $HYPERNYM

@@ -17,6 +17,7 @@ def get_rules(line, templates):
     return ret
 
 def parse_line(line, rule):
+    ret = []
     tokens = split_rule(rule)
     for i, t in enumerate(tokens):
         if t == '$*':
@@ -31,13 +32,17 @@ def parse_line(line, rule):
                   pass
           try:
               ng, res = read_ng(word_tokenize(cur_text))
-              print(t, 'norm:', ng, 'form:', cur_text)
+              ret.append([t, ng, cur_text])
+              #print(t, 'norm:', ng, 'form:', cur_text)
           except Exception as e:
-              print(e, cur_text)
+              #print(e, cur_text)
+              ret.append([e, cur_text])
+        
 
         else:
           if line.find(t) >= 0:
               line = line[line.index(t)+len(t):]
+    return ret
  
  
 def kb_to_prolog(kb):
@@ -74,7 +79,7 @@ def split_rule(line):
 
 if __name__=='__main__':
     if len(sys.argv)<=2:
-        print('USAGE: python gram_parse.py template_file input_file')
+        print('USAGE: python gram_parse.py templates_file input_file [output_file]')
         quit()
   
     inputo = sys.argv[2]
@@ -83,7 +88,9 @@ if __name__=='__main__':
     templates = [l.strip() for l in open(sys.argv[1])]
     #for t in templates:
     #    print(split_rule(t))
-        
+
+
+    terms = []        
     for l in open(inputo, 'r', encoding='utf-8'):
         lines += l.strip().split('. ')
     for line in lines:
@@ -91,5 +98,20 @@ if __name__=='__main__':
         rules = get_rules(line, templates)
         if rules:
           rule = sorted(rules, key=lambda x: len(x))[-1]
-          parse_line(line, rule)
+          terms += parse_line(line, rule)
+    out_file = None
+    if len(sys.argv)>3:
+        out_file = open(sys.argv[3], 'w', encoding='utf-8')
+        out_file.write('relation\tnormalized\tsource\n')
+    for t in terms:
+        if len(t) == 3:
+            print('{}, norm: {}, form: {}'.format(*t))
+            if out_file:
+                out_file.write('\t'.join(t)+'\n')
+        else:
+            print(*t)
+
+    if out_file:
+        out_file.close()
+    
            

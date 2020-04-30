@@ -1,47 +1,10 @@
 import sys
 
-from morph import inflect, multi_inflect, parse
+from morph import read_ng, multiparse
 from nltk.tokenize import word_tokenize
 
 import re
 
-
-def read_ng(words):
-    ng = []
-    case = 'nomn'
-    for i, w in enumerate(words):
-        if len(w)==0 or not (w[0].isalpha()):
-            i-=1
-            break
-        if 'LATN' in parse(w)[0].tag:
-            ng += [w]
-            continue
-        pos = parse(w)[0].tag.POS
-        if pos in ['NOUN', 'ADJF', 'PRTF', "PREP"]:
-            if pos=='PRTF':
-                case = 'nomn'
-            ng += [inflect(w, set([case, 'sing']))]
-            if pos=='NOUN':
-                case = 'gent'
-            if pos=='PRTF':
-                case = 'ablt'
-        else:
-            i-=1
-            break
-    return ' '.join(ng), words[i+1:]
- 
-   
-def multiparse(words):
-    words = ' '.join(words).replace(' и ', ', ').split(', ')
-    return [read_ng(w.split(' '))[0] for w in words]
-    
-
-def read_brackets(words):
-    ret = []
-    line = ' '.join(words).replace(') ', ')')
-    ret = line[line.index('(')+1: line.index(')')].split(' ')
-    res = line[line.index(')')+2:]
-    return ret, res
     
 def get_rules(line, templates):
     ret = []

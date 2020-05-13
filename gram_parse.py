@@ -11,7 +11,7 @@ class GramParser:
 
     def parse_line(self, line):
         terms = []
-        rules = self.get_rules(lines)
+        rules = self.get_rules(line)
         if rules:
             rule = sorted(rules, key=lambda x: len(x))[-1]
             terms += self.parse(line, rule)
@@ -21,18 +21,14 @@ class GramParser:
     def get_rules(self, line):
         ret = []
         for t in self.templates:
-            print(t)
-            t_re = re.sub('\$[\w\*]+', '[\W\w]*', t)
-            print(t_re)
-            for c in '.?()':
-                t_re = t_re.replace(c, '\\' + c) 
-            if re.search(t_re, line):
+            tokens = self.split_rule(t)
+            if all([t.startswith('$') or t in line for t in  tokens]):
                 ret.append(t)
         return ret
 
     def parse(self, line, rule):
         ret = []
-        tokens = split_rule(rule)
+        tokens = self.split_rule(rule)
         for i, t in enumerate(tokens):
             if t == '$*':
                 continue
@@ -99,13 +95,8 @@ if __name__=='__main__':
     lines = []
 
     templates = [l.strip() for l in open(sys.argv[1])]
-    #for t in templates:
-    #    print(split_rule(t))
 
     parser = GramParser(templates)
-
-    for t in templates:
-        print(parser.split_rule(t))
 
     terms = []        
     for l in open(inputo, 'r', encoding='utf-8'):

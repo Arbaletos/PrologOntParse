@@ -5,45 +5,83 @@ from nltk.tokenize import word_tokenize
 
 import re
 
+class GramParser:
+    def __init__(self, templates):
+        self.templates = templates
+
+    def parse_line(self, line):
+        terms = []
+        rules = self.get_rules(lines)
+        if rules:
+            rule = sorted(rules, key=lambda x: len(x))[-1]
+            terms += self.parse(line, rule)
+        return terms
+
     
-def get_rules(line, templates):
-    ret = []
-    for t in templates:
-        t_re = re.sub('\$[\w\*]+', '[\W\w]*', t)
-        for c in '.?()':
-            t_re = t_re.replace(c, '\\' + c) 
-        if re.search(t_re, line):
-            ret.append(t)
-    return ret
+    def get_rules(self, line):
+        ret = []
+        for t in self.templates:
+            print(t)
+            t_re = re.sub('\$[\w\*]+', '[\W\w]*', t)
+            print(t_re)
+            for c in '.?()':
+                t_re = t_re.replace(c, '\\' + c) 
+            if re.search(t_re, line):
+                ret.append(t)
+        return ret
 
-def parse_line(line, rule):
-    ret = []
-    tokens = split_rule(rule)
-    for i, t in enumerate(tokens):
-        if t == '$*':
-            continue
-        elif t.startswith('$'):
-          cur_text = line
-          if i+1 < len(tokens):
-              try:
-                  cur_text = line[:line.index(tokens[i+1])].strip()
-                  line = line[line.index(tokens[i+1]):]
-              except:
-                  pass
-          try:
-              ng, res = read_ng(word_tokenize(cur_text))
-              ret.append([t, ng, cur_text])
-              #print(t, 'norm:', ng, 'form:', cur_text)
-          except Exception as e:
-              #print(e, cur_text)
-              ret.append([e, cur_text])
-        
+    def parse(self, line, rule):
+        ret = []
+        tokens = split_rule(rule)
+        for i, t in enumerate(tokens):
+            if t == '$*':
+                continue
+            elif t.startswith('$'):
+                cur_text = line
+                if i+1 < len(tokens):
+                    try:
+                        cur_text = line[:line.index(tokens[i+1])].strip()
+                        line = line[line.index(tokens[i+1]):]
+                    except:
+                        pass
+                try:
+                    ng, res = read_ng(word_tokenize(cur_text))
+                    ret.append([t, ng, cur_text])
+                    #print(t, 'norm:', ng, 'form:', cur_text)
+                except Exception as e:
+                    #print(e, cur_text)
+                    ret.append([e, cur_text])
+            else:
+                if line.find(t) >= 0:
+                    line = line[line.index(t)+len(t):]
+        return ret
 
-        else:
-          if line.find(t) >= 0:
-              line = line[line.index(t)+len(t):]
-    return ret
- 
+    def split_rule(self, line):
+        tokens = []
+        i = 0
+        while i < len(line):
+            if '$' in line:
+                if not line.startswith('$'):
+                    tokens.append(line[:line.index('$')])
+                line = line[line.index('$')+1:]
+                if line.startswith('*'):
+                    tokens.append('$*')
+                    line = line[1:]
+                    continue
+                span = re.search('\W', line)
+                if span:
+                    tokens.append('$' + line[:line.index(span[0])])
+                    line = line[line.index(span[0]):]
+                else:
+                    tokens.append('$'+line)
+                    break
+            else:
+                tokens += [line]
+                break
+        return tokens
+   
+
+
  
 def kb_to_prolog(kb):
     ret = []
@@ -51,31 +89,6 @@ def kb_to_prolog(kb):
         ret.append("{}('{}').".format(a, "','".join(args))) 
     return ret
 
-
-def split_rule(line):
-    tokens = []
-    i = 0
-    while i < len(line):
-      if '$' in line:
-          if not line.startswith('$'):
-              tokens.append(line[:line.index('$')])
-          line = line[line.index('$')+1:]
-          if line.startswith('*'):
-              tokens.append('$*')
-              line = line[1:]
-              continue
-          span = re.search('\W', line)
-          if span:
-              tokens.append('$' + line[:line.index(span[0])])
-              line = line[line.index(span[0]):]
-          else:
-              tokens.append('$'+line)
-              break
-      else:
-          tokens += [line]
-          break
-    return tokens
-   
 
 if __name__=='__main__':
     if len(sys.argv)<=2:
@@ -89,16 +102,17 @@ if __name__=='__main__':
     #for t in templates:
     #    print(split_rule(t))
 
+    parser = GramParser(templates)
+
+    for t in templates:
+        print(parser.split_rule(t))
 
     terms = []        
     for l in open(inputo, 'r', encoding='utf-8'):
         lines += l.strip().split('. ')
     for line in lines:
         #print('line: ', line)
-        rules = get_rules(line, templates)
-        if rules:
-          rule = sorted(rules, key=lambda x: len(x))[-1]
-          terms += parse_line(line, rule)
+        terms += parser.parse_line(line)
     out_file = None
     if len(sys.argv)>3:
         out_file = open(sys.argv[3], 'w', encoding='utf-8')

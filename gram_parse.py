@@ -7,7 +7,8 @@ import re
 
 class GramParser:
     def __init__(self, templates):
-        self.templates = templates
+        self.rules = [self.split_rule(t) for t in templates]
+
 
     def parse_line(self, line):
         terms = []
@@ -20,15 +21,14 @@ class GramParser:
     
     def get_rules(self, line):
         ret = []
-        for t in self.templates:
-            tokens = self.split_rule(t)
-            if all([t.startswith('$') or t in line for t in  tokens]):
-                ret.append(t)
+        for rule in self.rules:
+            if all([t.startswith('$') or t in line for t in rule]):
+                ret.append(rule)
         return ret
 
     def parse(self, line, rule):
         ret = []
-        tokens = self.split_rule(rule)
+        tokens = rule
         for i, t in enumerate(tokens):
             if t == '$*':
                 continue

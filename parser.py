@@ -9,8 +9,8 @@ class DeepGramParser:
         self.rules = {}
         for t in templates:
             if '::-' not in t:
-                print('Incorrect rule format!')
-                return 
+                print('Incorrect rule format, {}!'.format(t))
+                continue
             key, tokens = self.split_rule(t)
             self.rules[key] = self.rules.get(key, []) + [tokens]      
 
@@ -18,8 +18,7 @@ class DeepGramParser:
         ret = []
         rules = self.get_rules(line, symbol)
         if rules:
-            rule = sorted(rules, key=lambda x: len(x))[-1]
-            terms = self.parse_rule(line, rule)
+            terms = self.parse_rule(line, rules[0])
             for t, text in terms:
                 rec = self.parse(text, symbol=t)
                 if rec:
@@ -45,17 +44,17 @@ class DeepGramParser:
             if t == '$*':
                 continue
             elif t.startswith('$'):
-                cur_text = line
                 if i+1 < len(tokens):
-                    try:
-                        cur_text = line[:line.index(tokens[i+1])].strip()
-                        line = line[line.index(tokens[i+1]):]
-                    except:
-                        pass
-                ret.append([t, cur_text])
+                    next_token = tokens[i+1]
+                    if tokens[i+1] not in line:  # Something gone wrong
+                        return []
+                    cur, line = line.split(next_token, maxsplit=1)
+                    ret.append([t, cur])
+                else:
+                    ret.append([t, line])
             else:
-                if line.find(t) >= 0:
-                    line = line[line.index(t)+len(t):]
+                if line.count(t) > 0:
+                    line = line.split(t, maxsplit=1)[1]
         return ret
 
     def split_rule(self, line):

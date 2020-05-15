@@ -6,9 +6,9 @@ from nltk.tokenize import word_tokenize
 import re
 
 class GramParser:
+
     def __init__(self, templates):
         self.rules = [self.split_rule(t) for t in templates]
-
 
     def parse_line(self, line):
         terms = []
@@ -18,7 +18,6 @@ class GramParser:
             terms += self.parse(line, rule)
         return terms
 
-    
     def get_rules(self, line):
         ret = []
         for rule in self.rules:
@@ -75,8 +74,6 @@ class GramParser:
                 tokens += [line]
                 break
         return tokens
-   
-
 
  
 def kb_to_prolog(kb):

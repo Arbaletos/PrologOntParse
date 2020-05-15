@@ -1,6 +1,7 @@
 import sys
 
 from parser import GramParser
+from parser import DeepGramParser
 
  
 def kb_to_prolog(kb):
@@ -20,14 +21,14 @@ if __name__=='__main__':
 
     templates = [l.strip() for l in open(sys.argv[1])]
 
-    parser = GramParser(templates)
+    parser = DeepGramParser(templates)
 
     terms = []        
     for l in open(inputo, 'r', encoding='utf-8'):
         lines += l.strip().split('. ')
     for line in lines:
         #print('line: ', line)
-        terms += parser.parse_line(line)
+        terms += parser.parse(line)
     out_file = None
     if len(sys.argv)>3:
         out_file = open(sys.argv[3], 'w', encoding='utf-8')

@@ -3,17 +3,98 @@ from nltk.tokenize import word_tokenize
 
 import re
 
+class DeepGramParser:
+
+    def __init__(self, templates):
+        self.rules = {}
+        for t in templates:
+            if '::-' not in t:
+                print('Incorrect rule format!')
+                return 
+            key, tokens = self.split_rule(t)
+            self.rules[key] = self.rules.get(key, []) + [tokens]      
+
+    def parse(self, line, symbol='$EXPRESSION'):
+        ret = []
+        rules = self.get_rules(line, symbol)
+        if rules:
+            rule = sorted(rules, key=lambda x: len(x))[-1]
+            terms = self.parse_rule(line, rule)
+            for t, text in terms:
+                rec = self.parse(text, symbol=t)
+                if rec:
+                    ret += rec
+                else:
+                    ret += [(t, text)]
+        return ret
+
+    def get_rules(self, line, symbol):
+        ret = []
+        if symbol not in self.rules:
+            return []
+
+        for rule in self.rules[symbol]:
+            if all([t.startswith('$') or t in line for t in rule]):
+                ret.append(rule)
+        return ret
+
+    def parse_rule(self, line, rule):
+        ret = []
+        tokens = rule
+        for i, t in enumerate(tokens):
+            if t == '$*':
+                continue
+            elif t.startswith('$'):
+                cur_text = line
+                if i+1 < len(tokens):
+                    try:
+                        cur_text = line[:line.index(tokens[i+1])].strip()
+                        line = line[line.index(tokens[i+1]):]
+                    except:
+                        pass
+                ret.append([t, cur_text])
+            else:
+                if line.find(t) >= 0:
+                    line = line[line.index(t)+len(t):]
+        return ret
+
+    def split_rule(self, line):
+        exp, line = line.split('::-')
+        tokens = []
+        i = 0
+        while i < len(line):
+            if '$' in line:
+                if not line.startswith('$'):
+                    tokens.append(line[:line.index('$')])
+                line = line[line.index('$')+1:]
+                if line.startswith('*'):
+                    tokens.append('$*')
+                    line = line[1:]
+                    continue
+                span = re.search('\W', line)
+                if span:
+                    tokens.append('$' + line[:line.index(span[0])])
+                    line = line[line.index(span[0]):]
+                else:
+                    tokens.append('$'+line)
+                    break
+            else:
+                tokens += [line]
+                break
+        return exp, tokens
+
+
 class GramParser:
 
     def __init__(self, templates):
         self.rules = [self.split_rule(t) for t in templates]
 
-    def parse_line(self, line):
+    def parse(self, line):
         terms = []
         rules = self.get_rules(line)
         if rules:
             rule = sorted(rules, key=lambda x: len(x))[-1]
-            terms += self.parse(line, rule)
+            terms += self.parse_rule(line, rule)
         return terms
 
     def get_rules(self, line):
@@ -23,7 +104,7 @@ class GramParser:
                 ret.append(rule)
         return ret
 
-    def parse(self, line, rule):
+    def parse_rule(self, line, rule):
         ret = []
         tokens = rule
         for i, t in enumerate(tokens):

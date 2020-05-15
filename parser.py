@@ -1,4 +1,4 @@
-from morph import read_ng, multiparse
+from morph import read_ng, multiparse, check_tag, is_pos
 from nltk.tokenize import word_tokenize
 
 import re
@@ -17,15 +17,35 @@ class DeepGramParser:
     def parse(self, line, symbol='$EXPRESSION'):
         ret = []
         rules = self.get_rules(line, symbol)
-        if rules:
-            terms = self.parse_rule(line, rules[0])
+        for rule in rules:
+            ret = []
+            #print(line, rule)
+            terms = self.parse_rule(line, rule)
             for t, text in terms:
                 rec = self.parse(text, symbol=t)
                 if rec:
                     ret += rec
-                else:
+                if len(rec) == 0 and t in self.rules:
+                    ret = []
+                    break
+                if self.is_valid([(t, text)]):
                     ret += [(t, text)]
+                else:
+                    ret = []
+                    break
+            if ret:
+                return ret
         return ret
+
+    def is_valid(self, parse):
+        for t, text in parse:
+            if is_pos(t.split('_')[0][1:]):
+                if len(word_tokenize(text))>1:
+                    return False
+                tag = t[1:].split('_')
+                if check_tag(text, tag) is False:
+                    return False
+        return True
 
     def get_rules(self, line, symbol):
         ret = []
@@ -41,14 +61,17 @@ class DeepGramParser:
         ret = []
         tokens = rule
         for i, t in enumerate(tokens):
+            #print('token: "{}", line: "{}"'.format(t, line))
             if t == '$*':
                 continue
             elif t.startswith('$'):
                 if i+1 < len(tokens):
                     next_token = tokens[i+1]
-                    if tokens[i+1] not in line:  # Something gone wrong
+                    if next_token not in line:  # Something gone wrong
+                        #print('shit')
                         return []
                     cur, line = line.split(next_token, maxsplit=1)
+                    line = next_token+line
                     ret.append([t, cur])
                 else:
                     ret.append([t, line])

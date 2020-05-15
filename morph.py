@@ -41,6 +41,13 @@ def read_ng(words):
 def multiparse(words):
     words = ' '.join(words).replace(' и ', ', ').split(', ')
     return [read_ng(w.split(' '))[0] for w in words]
+
+
+def check_tag(word, tags):
+    for tag in morph.tag(word):
+        if all([t in tag for t in tags]):
+            return True
+    return False
     
 
 def read_brackets(words):
@@ -49,5 +56,8 @@ def read_brackets(words):
     ret = line[line.index('(')+1: line.index(')')].split(' ')
     res = line[line.index(')')+2:]
     return ret, res
+
+def is_pos(word):
+    return word in ['NOUN', 'VERB', 'ADJF']  #  Yup, wee need to extract full list of pos from morph.
 
 morph = pymorphy2.MorphAnalyzer()

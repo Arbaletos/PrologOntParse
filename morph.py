@@ -1,5 +1,10 @@
 import pymorphy2
 
+def concatenate(words):
+    if len(words) == 1:
+        return words[0]
+    return ', '.join(words[:-1])+' и '+words[-1]
+
 def inflect(word, g):
     words = word.split(' ')
     return ' '.join([morph.parse(w)[0].inflect(g).word for w in words])
@@ -8,7 +13,7 @@ def multi_inflect(words, g):
     if len(words) == 1:
         return inflect(words[0], g)
     inflected_words = [inflect(w, g) for w in words]
-    return ', '.join(inflected_words[:-1])+' и '+inflected_words[-1]
+    return concatenate(inflected_words)
 
 def parse(w):
     return morph.parse(w)

@@ -1,0 +1,5 @@
+Что такое $TERM?| Это $HYPERNYM(TERM), что $ATTR(TERM)
+Какие есть виды $TERM?{gent,plur}| $HYPONYM(TERM)
+Какие существуют примеры $TERM?{gent,plur}| $INSTANCE(TERM)
+Что является частями $TERM{gent,sing}? | $MERONYM(TERM)
+Частью чего является $TERM? | $HOLONYM(TERM){gent}

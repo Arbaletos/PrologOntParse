@@ -37,8 +37,8 @@ class Demandanto:
 
     def ask(self, term):
         questions = []
-        hol = [a[0] for a in self.get_rel('mer', term, None)]
-        mer = [a[0] for a in self.get_rel('mer', None, term)]
+        mer = [a[0] for a in self.get_rel('mer', term, None)]
+        hol = [a[0] for a in self.get_rel('mer', None, term)]
         hyp = [a[0] for a in self.get_rel('hyp', term, None)]
         hyper = [a[0] for a in self.get_rel('hyp', None, term)]
         inst = [a[0] for a in self.get_rel('inst', term, None)]

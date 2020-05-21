@@ -1,6 +1,6 @@
 import sys
 
-from morph import inflect, multi_inflect
+from morph import inflect, multi_inflect, concatenate
 
 
 class Demandanto:
@@ -26,8 +26,45 @@ class Demandanto:
                 continue
             if len(args)>1 and arg2 is not None and arg2 != args[1]:
                 continue
-            ret.append((r, args))
+            cur = []
+            if arg1 is None:
+                cur.append(args[0])
+            if len(args)>1 and arg2 is None:
+                cur.append(args[1])
+            if cur:
+                ret.append(cur)
         return ret
+
+    def ask(self, term):
+        questions = []
+        hol = [a[0] for a in self.get_rel('mer', term, None)]
+        mer = [a[0] for a in self.get_rel('mer', None, term)]
+        hyp = [a[0] for a in self.get_rel('hyp', term, None)]
+        hyper = [a[0] for a in self.get_rel('hyp', None, term)]
+        inst = [a[0] for a in self.get_rel('inst', term, None)]
+        attr = [a[0] for a in self.get_rel('attr', term, None)]
+        if len(attr) and len(hyper):
+            q = 'Что такое {}?'.format(term.lower())
+            a = 'Это {}, что {}.'.format(hyper[0].lower(), concatenate(attr))
+            questions.append((q, a))
+        if len(hyp):
+            q = 'Какие есть виды {}?'.format(inflect(term, {'gent', 'plur'}))
+            a = '{}'.format(multi_inflect(hyp, set()))
+            questions.append((q, a))
+        if len(inst):
+            q = 'Какие существуют примеры {}?'.format(inflect(term, {'gent', 'plur'}))
+            a = '{}'.format(concatenate(inst))
+            questions.append((q, a))
+        if len(mer):
+            q = 'Что является частями {}?'.format(inflect(term, {'gent', 'sing'}))
+            a = '{}'.format(concatenate(mer))
+            questions.append((q, a))
+        if len(hol):
+            q = 'Частью чего является {}?'.format(term)
+            a = '{}'.format(multi_inflect(hol, {'gent'}))
+            questions.append((q, a))
+
+        return questions
 
 
 if __name__=='__main__':
@@ -38,6 +75,8 @@ if __name__=='__main__':
     inputo = sys.argv[1]
 
     demandanto = Demandanto(inputo)
-    print(demandanto.kb)
-
-    print(demandanto.get_rel('hyp', None, 'Формальный язык'))
+    
+    for term in demandanto.get_rel('term'):
+        q = demandanto.ask(term[0])
+        if q:
+            print(q)

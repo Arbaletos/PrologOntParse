@@ -13,16 +13,25 @@ def kb_to_prolog(kb):
 
 if __name__=='__main__':
     if len(sys.argv)<=2:
-        print('USAGE: python gram_parse.py templates_file input_file [output_file]')
+        print('USAGE: python gram_parse.py [-r] templates_file input_file [output_file]')
+        print('-r for recursive mode (DeepGramParser), needs grammar file')
+        print('not key for default mode (GramParser), needs template file')
         quit()
   
+    deep = False
+    if '-r' in sys.argv:
+        deep = True
+        del sys.argv[sys.argv.index('-r')]
     inputo = sys.argv[2]
     lines = []
 
     templates = [l.strip() for l in open(sys.argv[1])]
-
-    parser = DeepGramParser(templates)
-
+    
+    if deep:
+        parser = DeepGramParser(templates)
+    else:
+        parser = GramParser(templates)
+ 
     terms = []        
     for l in open(inputo, 'r', encoding='utf-8'):
         lines += l.strip().split('. ')

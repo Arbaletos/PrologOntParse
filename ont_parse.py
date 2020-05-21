@@ -11,7 +11,7 @@ def parse_line(line):
         ret.append(('term', [root]))
         args = multiparse(res[1:])
         for a in args:
-            ret.append(('ekz', [root, a]))
+            ret.append(('inst', [root, a]))
         return ret
     ng, res = read_ng(words)
     ret.append(('term', [ng]))
@@ -29,10 +29,10 @@ def parse_line(line):
     elif 'состоит из' in line:
         args = multiparse(res[2:])
         for a in args:
-            ret.append(('part', [ng, a]))
+            ret.append(('mer', [ng, a]))
     elif 'входит в состав ' in line:
         arg = read_ng(res[3:])[0]
-        ret.append(('part', [arg, ng]))
+        ret.append(('mer', [arg, ng]))
     elif len(res) and len(res[0]):
         ret.append(('attr', [ng, ' '.join(res)]))
     return ret

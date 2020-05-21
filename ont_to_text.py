@@ -20,7 +20,7 @@ def explain(term, kb):
     if 'hyp' in filt:
         if len(filt['hyp']) >= 1:
             out += '{} подразделяются на {}. '.format(inflect(term, {'plur'}).title(), multi_inflect([s[1] for s in filt['hyp']], {'accs', 'plur'}))
-    if 'part' in filt:
+    if 'mer' in filt:
         out += '{} входит в состав {}. '.format(term, multi_inflect([s[1] for s in filt['part']], {'gent'}))
     if 'inv_part' in filt:
         if len(filt['inv_part']) >= 1:
@@ -28,11 +28,11 @@ def explain(term, kb):
     if 'attr' in filt:
         for a in filt['attr']:
             out += '{} {}. '.format(term, a[1])
-    if 'ekz' in filt:
-        if len(filt['ekz']) > 1:
-            out += 'Примеры {} -- {}. '.format(inflect(term, {'gent', 'plur'}), multi_inflect([s[1] for s in filt['ekz']], set()))
+    if 'inst' in filt:
+        if len(filt['inst']) > 1:
+            out += 'Примеры {} -- {}. '.format(inflect(term, {'gent', 'plur'}), multi_inflect([s[1] for s in filt['inst']], set()))
         else:
-            out += 'Пример {} -- {}. '.format(inflect(term, {'gent', 'sing'}), multi_inflect([s[1] for s in filt['ekz']], set()))
+            out += 'Пример {} -- {}. '.format(inflect(term, {'gent', 'sing'}), multi_inflect([s[1] for s in filt['inst']], set()))
     return out
         
    

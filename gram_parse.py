@@ -1,7 +1,7 @@
 import sys
 
-from parser import GramParser
-from parser import DeepGramParser
+from gramparser import GramParser
+from gramparser import DeepGramParser
 
  
 def kb_to_prolog(kb):
